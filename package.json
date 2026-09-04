@@ -1,0 +1,10 @@
+{
+  "name": "lotto-weighted-generator",
+  "version": "1.0.0",
+  "description": "동행복권 통계 기반 5게임 가중치 로또 생성기",
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "npm.cmd --prefix client run dev",
+    "test": "node test_algorithm.js"
+  }
+}

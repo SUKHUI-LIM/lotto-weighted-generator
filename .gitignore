@@ -1,0 +1,16 @@
+# 의존성 모듈
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# 빌드 산출물
+client/dist/
+dist/
+
+# 환경 변수 및 임시 파일
+.env
+*.log
+.DS_Store
+.vscode/
+.idea/
+test_service.js
