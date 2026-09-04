@@ -4,6 +4,7 @@ import StatsHeatmap from './components/StatsHeatmap';
 import NumberSelector from './components/NumberSelector';
 import GameResults from './components/GameResults';
 import { generateFiveGames, generateSingleGame } from './utils/lottoGenerator';
+import { calculateClientStats } from './data/seedLottoData';
 import { Sparkles, Info, ShieldCheck, BarChart3, HelpCircle } from 'lucide-react';
 
 export default function App() {
@@ -23,18 +24,25 @@ export default function App() {
   const [games, setGames] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // 백엔드 API에서 데이터 불러오기
+  // 백엔드 API에서 데이터 불러오기 (실패 시 클라이언트 내장 데이터 즉시 전환)
   const fetchData = useCallback(async (count = selectedCount) => {
     setLoading(true);
     try {
       const res = await fetch(`/api/lotto/stats?count=${count}`);
+      if (!res.ok) throw new Error('API request failed');
       const json = await res.json();
       if (json.success && json.data) {
         setStatsData(json.data);
         setLatestData(json.data.latestDraw);
+        return;
       }
+      throw new Error('Invalid API response');
     } catch (err) {
-      console.error('로또 데이터 조회 실패:', err);
+      // GitHub Pages 등 정적 호스팅 환경인 경우 클라이언트 내장 통계 엔진 가동
+      console.log('Using client fallback stats:', err.message);
+      const fallback = calculateClientStats(count);
+      setStatsData(fallback);
+      setLatestData(fallback.latestDraw);
     } finally {
       setLoading(false);
     }
